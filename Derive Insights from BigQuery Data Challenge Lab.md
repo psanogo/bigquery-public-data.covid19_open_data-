@@ -1,8 +1,6 @@
 Task 1: Total confirmed cases
 This query sums the cumulative_confirmed cases for the specified date across all locations to give a global total.
 
-sql
- Show full code block 
 #standardSQL
 SELECT
   SUM(cumulative_confirmed) AS total_cases_worldwide
@@ -10,8 +8,13 @@ FROM
   `bigquery-public-data.covid19_open_data.covid19_open_data`
 WHERE
   date = '2020-05-15'
+
+
+  
 Task 2: Worst affected areas
 To find the number of states in the US with a significant number of deaths, we filter by country and date, then count the distinct states (subregion1_name) that meet the death toll criteria. We also ensure we don't count any entries where the state name is NULL.
+
+
 
 sql
  Show full code block 
@@ -25,8 +28,12 @@ WHERE
   AND date = '2020-05-15'
   AND cumulative_deceased > 100
   AND subregion1_name IS NOT NULL
+
+  
 Task 3: Identify hotspots
 This query selects the name and confirmed cases for US states exceeding a certain threshold on a specific date. The results are ordered to show the most affected states first.
+
+
 
 sql
  Show full code block 
@@ -43,8 +50,12 @@ WHERE
   AND subregion1_name IS NOT NULL
 ORDER BY
   total_confirmed_cases DESC
+
+  
 Task 4: Fatality ratio
 To calculate the case-fatality ratio for Italy at the end of May 2020, we find the cumulative totals on the last day of the month and then perform the calculation. Using SUM ensures we get a single, country-wide total even if the data has sub-region entries.
+
+
 
 sql
  Show full code block 
@@ -58,8 +69,12 @@ FROM
 WHERE
   country_name = 'Italy'
   AND date = '2020-05-31'
+
+  
 Task 5: Identifying specific day
 To find the first day the death toll crossed a specific number, we can aggregate the deaths by date for Italy, filter for days exceeding the threshold, and then select the earliest date from that set.
+
+
 
 sql
  Show full code block 
@@ -85,8 +100,12 @@ WHERE
 ORDER BY
   date
 LIMIT 1
+
+
 Task 6: Finding days with zero net new cases
 The provided query was a good start! It correctly calculated the daily new cases but was missing the final step. The corrected query below adds a final SELECT statement to count the number of days where the net_new_cases value is zero.
+
+
 
 sql
  Show full code block 
@@ -117,8 +136,12 @@ SELECT
   COUNTIF(net_new_cases = 0) AS days_with_zero_increase
 FROM
   india_previous_day_comparison
+
+  
 Task 7: Doubling rate
 Using a similar structure with Common Table Expressions (CTEs), this query first aggregates daily cases for the US, then uses the LAG function to compare each day to the previous one, calculating the percentage increase. The final SELECT filters for dates where this increase was greater than 10%.
+
+
 
 sql
  Show full code block 
@@ -164,8 +187,12 @@ WHERE
   ) > 10
 ORDER BY
   date
+
+  
 Task 8: Recovery rate
 This query calculates the recovery rate for countries with a high number of cases. It filters for the latest data up to May 10, 2020, aggregates the numbers per country, and then filters for countries with over 50,000 confirmed cases before calculating the rate and ordering the results.
+
+
 
 sql
  Show full code block 
@@ -195,8 +222,11 @@ WHERE
 ORDER BY
   recovery_rate DESC
 LIMIT 10
+
+
 Task 9: CDGR - Cumulative daily growth rate
 The original query had a syntax error in the final SELECT statement. The SQRT function in SQL takes only one argument, whereas the formula for Nth root requires using the POWER or ^ operator. The corrected query uses POWER(base, exponent) to correctly calculate the CDGR.
+
 
 sql
  Show full code block 
@@ -234,10 +264,14 @@ SELECT
   ) - 1 AS cdgr
 FROM
   summary
+
+  
 Task 10. Create a Looker Studio report
 This task requires actions outside of a single SQL query. Here is the step-by-step process:
 
 Write the Base Query in BigQuery: First, you need a query that pulls the required data: daily confirmed cases and deaths for the United States within the specified date range.
+
+
 
 sql
  Show full code block 
@@ -275,4 +309,5 @@ Set Dimension to date.
 Add two Metrics: Number_of_Confirmed_Cases and Number_of_Deaths.
 Your chart will now plot both metrics over the specified date range, matching the requirements.
 This process allows you to create a dynamic report based on the results of your BigQuery query.
+
 
